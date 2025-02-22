@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>File Upload</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .container {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fcfcfc;
+            background-image: linear-gradient(327deg, #5f0530, #a20b4f);
+            
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3);
+            width: 600px;
+            height: 300px;
+            background-color: #ffffff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card h3 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .drop_box {
+            margin: 10px 0;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 3px dotted #a3a3a3;
+            border-radius: 5px;
+            width: 100%;
+            height: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .drop_box:hover {
+            background-color: #f0f0f0;
+        }
+
+        .drop_box h4 {
+            font-size: 16px;
+            font-weight: 400;
+            color: #2e2e2e;
+        }
+
+        .drop_box p {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #a3a3a3;
+        }
+
+        .btn {
+            text-decoration: none;
+            background-color: #005af0;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            outline: none;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            text-decoration: none;
+            background-color: #ffffff;
+            color: #005af0;
+            border: 1px solid #010101;
+        }
+
+        .form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form h4 {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <h3>Upload Files</h3>
+        <div class="drop_box" id="dropBox">
+            <header>
+                <h4>Select MP4 Video here</h4>
+            </header>
+            <p>Files Supported: MP4</p>
+            <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" hidden accept="video/mp4" id="fileID" name="file">
+                <button type="button" class="btn" id="chooseFileBtn">Choose File</button>
+                <button type="submit" class="btn" style="margin-top: 10px;">Upload</button>
+            </form>
+            <div class="result" id="result"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const uploadForm = document.getElementById('uploadForm');
+        const resultDiv = document.getElementById('result');
+        const fileInput = document.getElementById('fileID');
+        const dropBox = document.getElementById('dropBox');
+        const chooseFileBtn = document.getElementById('chooseFileBtn');
+
+        chooseFileBtn.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file && file.type === 'video/mp4') {
+                handleFile(file);
+            } else {
+                alert('Please upload an MP4 video file.');
+            }
+        });
+
+        dropBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropBox.style.backgroundColor = '#e0e0e0';
+        });
+
+        dropBox.addEventListener('dragleave', () => {
+            dropBox.style.backgroundColor = '#ffffff';
+        });
+
+        dropBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropBox.style.backgroundColor = '#ffffff';
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'video/mp4') {
+                handleFile(file);
+            } else {
+                alert('Please upload an MP4 video file.');
+            }
+        });
+
+        function handleFile(file) {
+            const fileName = file.name;
+            document.querySelector('header h4').textContent = fileName;
+        }
+
+        uploadForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(uploadForm);
+
+            fetch("{% url 'upload_video' %}", { // Ensure this URL is correct
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value // Ensure CSRF token is included
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.result) {
+                    resultDiv.innerHTML = `<strong>Prediction:</strong> ${data.result}`;
+                } else if (data.error) {
+                    resultDiv.innerHTML = `<strong>Error:</strong> ${data.error}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!-- detector/templates/detector/home.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Deepfake Detection</title>
+    <style>
+         @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+         @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+        body { font-family: Arial, sans-serif; margin: 50px;
+        background-color: #a20b4f;
+        color: white;
+        text-align: center;
+        }
+        .container { max-width: 600px; margin: auto;
+            box-shadow: 0px 0px 30px #000000a3;
+            color: black;
+        }
+        .result { margin-top: 20px; font-size: 1.2em;
+                font-size: 50px;
+        }
+
+        .container{
+            height: auto;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+        }
+        .container h2{
+            color: black;
+            margin: 2px;
+        }
+        .inner-sec{
+     border-radius: 7px;
+    height: 100px;
+    padding: 50px;
+    border: 3px dotted #7c7b7b;
+    color: black;
+    font-size: 20px;
+    font-family: sans-serif;
+        }
+        .inner-sec button{
+            height: 50px;
+            background-color: #005af0;
+            color: white;
+            padding: 10px;
+            font-family: "Poppins", sans-serif;
+            border: 0px solid white;
+
+        }
+    </style>
+</head>
+<body>
+    <h1>Deepfake Detection</h1>
+    <div class="container">
+        <h2>Upload Files</h2>
+        <div class="inner-sec">
+       
+        <form id="uploadForm" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Upload and Detect</button>
+        </form>
+    </div>
+        
+    </div>
+    <div class="result" id="result"></div>
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+        const resultDiv = document.getElementById('result');
+
+        uploadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(uploadForm);
+            
+            fetch("{% url 'upload_video' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.result){
+                    resultDiv.innerHTML = `<strong>Prediction:</strong> ${data.result}`;
+                } else if(data.error){
+                    resultDiv.innerHTML = `<strong>Error:</strong> ${data.error}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error}`;
+            });
+        });
+    </script>
+</body>
+</html>

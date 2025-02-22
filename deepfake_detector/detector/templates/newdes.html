@@ -1,0 +1,312 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Background with Demo Image and Button</title>
+    <link rel="stylesheet" href="{% static 'newdes.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .container {
+            height: 60vh;
+            margin: 8%;
+            margin-top: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgb(0 0 0 / 26%);
+            /* border: 3px dashed rgb(0 0 0 / 16%); */
+            border: 2px dashed #0066cc; /* Blue dashed border */
+            background-color: rgba(0, 102, 204, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: 2s;
+            color: black;
+            text-align: center;
+            font-family: sans-serif;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3);
+            width: 600px;
+            height: 300px;
+            background-color: #ffffff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card h3 {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .drop_box {
+            margin: 10px 0;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            border: 3px dotted #a3a3a3;
+            border-radius: 5px;
+            width: 100%;
+            height: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .drop_box:hover {
+            background-color: #f0f0f0;
+        }
+
+        .drop_box h4 {
+            font-size: 16px;
+            font-weight: 400;
+            color: #2e2e2e;
+        }
+
+        .drop_box p {
+            margin-top: 10px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #a3a3a3;
+        }
+
+        .btn {
+            text-decoration: none;
+            background-color: #005af0;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            outline: none;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            text-decoration: none;
+            background-color: #ffffff;
+            color: #005af0;
+            border: 1px solid #010101;
+        }
+
+        .form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form h4 {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav">
+        <div class="logo">
+        <img src="{% static 'hackasset/microsoft.png' %}">
+        </div>
+        <div class="navoptions">
+         <img src="{% static 'hackasset/sound-waves.png' %}">
+            <a>Audio</a>
+        </div>
+         <div class="navoptions">
+         <img src="{% static 'hackasset/video-call.png' %}">
+            <a>Video</a>
+        </div>
+        <div class="navoptions">
+          <img src="{% static 'hackasset/microphone.png' %}">
+           <a>Record</a>
+        </div>
+        <div class="navoptions">
+        <img src="{% static 'hackasset/joystick.png' %}">
+           <a>Game</a>
+        </div>
+        <div class="navoptions">
+        <img src="{% static 'hackasset/menu.png' %}">
+            <a>Menu</a>
+        </div>
+        
+    </div>
+    <div class="section">
+         <div class="header">
+             <b>Video Detector AI</b>
+             <button><img src="{% static 'hackasset/account.png' %}"><a>Login</a></button>
+    </div>
+        <h2>DeepFake Detector</h2>
+     <!-- <div class="main-box" id="mainBox">
+       <div class="upimg">
+            <img src="{% static 'hackasset/Lovepik_com-400278553-uploading-a-linear-icon.png' %}" alt="Upload Icon">
+            <input type="file" id="videoUpload" accept="video/*" style="display: none;">
+            <button class="filebtn" id="fileButton" onclick="document.getElementById('videoUpload').click();">Choose Video</button>
+            <p>Or</p>
+            <p class="text">drop files here</p>
+        </div>
+
+    </div> -->
+    <div class="container">
+        <div class="card">
+            <h3>Upload Files</h3>
+            <div class="drop_box" id="dropBox">
+                <header>
+                    <h4>Select MP4 Video here</h4>
+                </header>
+                <p>Files Supported: MP4</p>
+                <form id="uploadForm" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input type="file" hidden accept="video/mp4" id="fileID" name="file">
+                    <button type="button" class="btn" id="chooseFileBtn">Choose File</button>
+                    <button type="submit" class="btn" style="margin-top: 10px;">Upload</button>
+                </form>
+                <div class="result" id="result"></div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+ 
+    </body>
+    <!-- <script>
+        const mainBox = document.getElementById('mainBox');
+        const fileButton = document.getElementById('fileButton');
+
+        // Handle file selection from input
+        document.getElementById('videoUpload').addEventListener('change', function() {
+            if (this.files.length) {
+                const fileName = this.files[0].name;
+                fileButton.textContent = fileName; // Update button text
+                alert('Selected file: ' + fileName);
+            }
+        });
+
+        // Prevent default drag behaviors
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            mainBox.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        // Highlight the main box when dragging files over it
+        mainBox.addEventListener('dragenter', highlight, false);
+        mainBox.addEventListener('dragleave', unhighlight, false);
+        mainBox.addEventListener('dragover', highlight, false);
+        mainBox.addEventListener('drop', unhighlight, false);
+
+        // Handle dropped files
+        mainBox.addEventListener('drop', handleDrop, false);
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function highlight() {
+            mainBox.classList.add('highlight');
+        }
+
+        function unhighlight() {
+            mainBox.classList.remove('highlight');
+        }
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            // If a file is dropped, update button text
+            if (files.length) {
+                const fileName = files[0].name;
+                fileButton.textContent = fileName; // Update button text
+                alert('Dropped file: ' + fileName);
+            }
+        }
+    </script> -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadForm = document.getElementById('uploadForm');
+            const resultDiv = document.getElementById('result');
+            const fileInput = document.getElementById('fileID');
+            const dropBox = document.getElementById('dropBox');
+            const chooseFileBtn = document.getElementById('chooseFileBtn');
+    
+            chooseFileBtn.addEventListener('click', () => fileInput.click());
+    
+            fileInput.addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (file && file.type === 'video/mp4') {
+                    handleFile(file);
+                } else {
+                    alert('Please upload an MP4 video file.');
+                }
+            });
+    
+            dropBox.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropBox.style.backgroundColor = '#e0e0e0';
+            });
+    
+            dropBox.addEventListener('dragleave', () => {
+                dropBox.style.backgroundColor = '#ffffff';
+            });
+    
+            dropBox.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropBox.style.backgroundColor = '#ffffff';
+                const file = e.dataTransfer.files[0];
+                if (file && file.type === 'video/mp4') {
+                    handleFile(file);
+                } else {
+                    alert('Please upload an MP4 video file.');
+                }
+            });
+    
+            function handleFile(file) {
+                const fileName = file.name;
+                document.querySelector('header h4').textContent = fileName;
+            }
+    
+            uploadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(uploadForm);
+            
+            fetch("{% url 'upload_video' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.result){
+                    resultDiv.innerHTML = `<strong>Prediction:</strong> ${data.result}`;
+                } else if(data.error){
+                    resultDiv.innerHTML = `<strong>Error:</strong> ${data.error}`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error}`;
+            });
+        });
+        });
+    </script>
+</body>
+</html>
